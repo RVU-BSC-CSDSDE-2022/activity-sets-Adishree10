@@ -1,7 +1,10 @@
-run = "cowsay Configure me!"
+compile = ["make", "-s"]
+run = "./main"
+entrypoint = "main.c"
+hidden = ["main", "main-debug", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
 
-[nix]
-channel = "stable-21_11"
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix", ".ccls-cache"]
 
 [debugger]
 support = true
@@ -38,18 +41,25 @@ type = "request"
 
 [debugger.interactive.launchMessage.arguments]
 MIMode = "gdb"
+arg = []
 cwd = "."
+environment = []
 externalConsole = false
+logging = {}
 miDebuggerPath = "gdb"
 name = "g++ - Build and debug active file"
 program = "./main-debug"
 request = "launch"
+setupCommands = [
+	{ description = "Enable pretty-printing for gdb", ignoreFailures = true, text = "-enable-pretty-printing" }
+]
 stopAtEntry = false
 type = "cppdbg"
 
-[debugger.interactive.launchMessage.arguments.logging]
+[languages]
 
-[[debugger.interactive.launchMessage.arguments.setupCommands]]
-description = "Enable pretty-printing for gdb"
-ignoreFailures = true
-text = "-enable-pretty-printing"
+[languages.c]
+pattern = "**/*.{c,h}"
+
+[languages.c.languageServer]
+start = "ccls"
